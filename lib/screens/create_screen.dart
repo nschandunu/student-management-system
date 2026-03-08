@@ -11,16 +11,20 @@ class CreateScreen extends StatefulWidget {
 class _CreateScreenState extends State<CreateScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _idController = TextEditingController();
-  final _degreeController = TextEditingController();
+  final _studentIdController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _courseController = TextEditingController();
+  final _ageController = TextEditingController();
 
   final FirestoreService _firestoreService = FirestoreService();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _idController.dispose();
-    _degreeController.dispose();
+    _studentIdController.dispose();
+    _emailController.dispose();
+    _courseController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
@@ -28,12 +32,16 @@ class _CreateScreenState extends State<CreateScreen> {
     if (_formKey.currentState!.validate()) {
       await _firestoreService.addStudent(
         _nameController.text.trim(),
-        _idController.text.trim(),
-        _degreeController.text.trim(),
+        _studentIdController.text.trim(),
+        _emailController.text.trim(),
+        _courseController.text.trim(),
+        _ageController.text.trim(),
       );
       _nameController.clear();
-      _idController.clear();
-      _degreeController.clear();
+      _studentIdController.clear();
+      _emailController.clear();
+      _courseController.clear();
+      _ageController.clear();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Student added successfully')),
@@ -45,9 +53,11 @@ class _CreateScreenState extends State<CreateScreen> {
   Widget _buildField({
     required String label,
     required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return TextFormField(
       controller: controller,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
@@ -56,9 +66,8 @@ class _CreateScreenState extends State<CreateScreen> {
           onPressed: () => controller.clear(),
         ),
       ),
-      validator: (value) => (value == null || value.trim().isEmpty)
-          ? 'Please enter $label'
-          : null,
+      validator: (value) =>
+          (value == null || value.trim().isEmpty) ? 'Please enter $label' : null,
     );
   }
 
@@ -66,7 +75,7 @@ class _CreateScreenState extends State<CreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Add Student')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
@@ -75,9 +84,24 @@ class _CreateScreenState extends State<CreateScreen> {
             children: [
               _buildField(label: 'Name', controller: _nameController),
               const SizedBox(height: 16),
-              _buildField(label: 'Id', controller: _idController),
+              _buildField(
+                label: 'Student ID',
+                controller: _studentIdController,
+              ),
               const SizedBox(height: 16),
-              _buildField(label: 'Degree', controller: _degreeController),
+              _buildField(
+                label: 'Email',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              _buildField(label: 'Course', controller: _courseController),
+              const SizedBox(height: 16),
+              _buildField(
+                label: 'Age',
+                controller: _ageController,
+                keyboardType: TextInputType.number,
+              ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _submit,

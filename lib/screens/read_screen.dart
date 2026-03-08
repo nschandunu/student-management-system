@@ -32,33 +32,63 @@ class ReadScreen extends StatelessWidget {
               return Card(
                 color: Colors.blue,
                 margin: const EdgeInsets.symmetric(vertical: 6),
-                child: ListTile(
-                  title: Text(
-                    data['name'] ?? '',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'ID: ${data['studentId'] ?? ''}  •  ${data['degree'] ?? ''}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => UpdateScreen(
-                            docId: doc.id,
-                            name: data['name'] ?? '',
-                            studentId: data['studentId'] ?? '',
-                            degree: data['degree'] ?? '',
-                          ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data['name'] ?? '',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            _InfoRow(
+                              left: 'ID: ${data['studentId'] ?? ''}',
+                              right: 'Age: ${data['age'] ?? ''}',
+                            ),
+                            const SizedBox(height: 4),
+                            _InfoRow(
+                              left: 'Course: ${data['course'] ?? ''}',
+                              right: '',
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['email'] ?? '',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.white),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => UpdateScreen(
+                                docId: doc.id,
+                                name: data['name'] ?? '',
+                                studentId: data['studentId'] ?? '',
+                                email: data['email'] ?? '',
+                                course: data['course'] ?? '',
+                                age: data['age'] ?? '',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -66,6 +96,32 @@ class ReadScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String left;
+  final String right;
+
+  const _InfoRow({required this.left, required this.right});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            left,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ),
+        if (right.isNotEmpty)
+          Text(
+            right,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+      ],
     );
   }
 }

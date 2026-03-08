@@ -1,15 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
-  final CollectionReference _students = FirebaseFirestore.instance.collection(
-    'students',
-  );
+  final CollectionReference _students =
+      FirebaseFirestore.instance.collection('students');
 
-  Future<void> addStudent(String name, String studentId, String degree) async {
+  Future<void> addStudent(
+    String name,
+    String studentId,
+    String email,
+    String course,
+    String age,
+  ) async {
     await _students.add({
       'name': name,
       'studentId': studentId,
-      'degree': degree,
+      'email': email,
+      'course': course,
+      'age': age,
     });
   }
 
@@ -21,12 +28,16 @@ class FirestoreService {
     String docId,
     String name,
     String studentId,
-    String degree,
+    String email,
+    String course,
+    String age,
   ) async {
     await _students.doc(docId).update({
       'name': name,
       'studentId': studentId,
-      'degree': degree,
+      'email': email,
+      'course': course,
+      'age': age,
     });
   }
 

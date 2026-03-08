@@ -69,7 +69,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
               TextFormField(
                 controller: _idController,
                 decoration: InputDecoration(
-                  labelText: 'Id',
+                  labelText: 'Student ID',
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.close),
