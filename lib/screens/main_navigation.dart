@@ -34,18 +34,9 @@ class _MainNavigationState extends State<MainNavigation> {
         onTap: _onItemTapped,
         selectedItemColor: Colors.blue,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Create',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Read',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.delete),
-            label: 'Delete',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Read'),
+          BottomNavigationBarItem(icon: Icon(Icons.delete), label: 'Delete'),
         ],
       ),
     );
