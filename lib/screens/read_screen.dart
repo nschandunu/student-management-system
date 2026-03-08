@@ -6,10 +6,49 @@ import 'update_screen.dart';
 class ReadScreen extends StatelessWidget {
   const ReadScreen({super.key});
 
+  static const _pastelColors = [
+    Color(0xFFFFD6E0),
+    Color(0xFFFFEFCC),
+    Color(0xFFD6F5E8),
+    Color(0xFFCCE5FF),
+    Color(0xFFE8D6FF),
+    Color(0xFFFFD6CC),
+  ];
+
+  static const _pastelTextColors = [
+    Color(0xFFB0003A),
+    Color(0xFF8A6000),
+    Color(0xFF006644),
+    Color(0xFF004999),
+    Color(0xFF5B009E),
+    Color(0xFF8A2E00),
+  ];
+
+  Color _avatarColor(String name) {
+    if (name.isEmpty) return _pastelColors[0];
+    return _pastelColors[name.codeUnitAt(0) % _pastelColors.length];
+  }
+
+  Color _avatarTextColor(String name) {
+    if (name.isEmpty) return _pastelTextColors[0];
+    return _pastelTextColors[name.codeUnitAt(0) % _pastelTextColors.length];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Students')),
+      backgroundColor: const Color(0xFFF7F8FC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF7F8FC),
+        elevation: 0,
+        centerTitle: false,
+        title: const Text(
+          'Students',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirestoreService().getStudents(),
         builder: (context, snapshot) {
@@ -21,74 +60,124 @@ class ReadScreen extends StatelessWidget {
           }
           final docs = snapshot.data?.docs ?? [];
           if (docs.isEmpty) {
-            return const Center(child: Text('No students found.'));
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.people_outline,
+                      size: 64, color: Colors.grey.shade300),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No students yet',
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
           return ListView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final doc = docs[index];
               final data = doc.data() as Map<String, dynamic>;
-              return Card(
-                color: Colors.blue,
+              final name = data['name'] as String? ?? '';
+              final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+              final bgColor = _avatarColor(name);
+              final fgColor = _avatarTextColor(name);
+
+              return Container(
                 margin: const EdgeInsets.symmetric(vertical: 6),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
-                  child: Row(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  leading: CircleAvatar(
+                    radius: 24,
+                    backgroundColor: bgColor,
+                    child: Text(
+                      initial,
+                      style: TextStyle(
+                        color: fgColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                  subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              data['name'] ?? '',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            _InfoRow(
-                              left: 'ID: ${data['studentId'] ?? ''}',
-                              right: 'Age: ${data['age'] ?? ''}',
-                            ),
-                            const SizedBox(height: 4),
-                            _InfoRow(
-                              left: 'Course: ${data['course'] ?? ''}',
-                              right: '',
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              data['email'] ?? '',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: primary.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          data['course'] ?? '',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: primary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => UpdateScreen(
-                                docId: doc.id,
-                                name: data['name'] ?? '',
-                                studentId: data['studentId'] ?? '',
-                                email: data['email'] ?? '',
-                                course: data['course'] ?? '',
-                                age: data['age'] ?? '',
-                              ),
-                            ),
-                          );
-                        },
+                      const SizedBox(height: 5),
+                      Text(
+                        'ID: ${data['studentId'] ?? ''}  •  Age: ${data['age'] ?? ''}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      Text(
+                        data['email'] ?? '',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                     ],
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit_outlined, color: Colors.grey.shade400),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => UpdateScreen(
+                            docId: doc.id,
+                            name: data['name'] ?? '',
+                            studentId: data['studentId'] ?? '',
+                            email: data['email'] ?? '',
+                            course: data['course'] ?? '',
+                            age: data['age'] ?? '',
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               );
@@ -96,32 +185,6 @@ class ReadScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String left;
-  final String right;
-
-  const _InfoRow({required this.left, required this.right});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            left,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
-          ),
-        ),
-        if (right.isNotEmpty)
-          Text(
-            right,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
-          ),
-      ],
     );
   }
 }

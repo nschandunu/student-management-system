@@ -44,7 +44,12 @@ class _CreateScreenState extends State<CreateScreen> {
       _ageController.clear();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Student added successfully')),
+          SnackBar(
+            content: const Text('Student added successfully'),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         );
       }
     }
@@ -53,17 +58,41 @@ class _CreateScreenState extends State<CreateScreen> {
   Widget _buildField({
     required String label,
     required TextEditingController controller,
+    required IconData prefixIcon,
     TextInputType keyboardType = TextInputType.text,
   }) {
+    final primary = Theme.of(context).colorScheme.primary;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        prefixIcon: Icon(prefixIcon, size: 20),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close, size: 18),
           onPressed: () => controller.clear(),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: primary, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
         ),
       ),
       validator: (value) =>
@@ -74,42 +103,71 @@ class _CreateScreenState extends State<CreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Student')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: const Text(
+          'Add Student',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildField(label: 'Name', controller: _nameController),
-              const SizedBox(height: 16),
+              _buildField(
+                label: 'Name',
+                controller: _nameController,
+                prefixIcon: Icons.person_outline,
+              ),
+              const SizedBox(height: 14),
               _buildField(
                 label: 'Student ID',
                 controller: _studentIdController,
+                prefixIcon: Icons.badge_outlined,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               _buildField(
                 label: 'Email',
                 controller: _emailController,
+                prefixIcon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 16),
-              _buildField(label: 'Course', controller: _courseController),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
+              _buildField(
+                label: 'Course',
+                controller: _courseController,
+                prefixIcon: Icons.book_outlined,
+              ),
+              const SizedBox(height: 14),
               _buildField(
                 label: 'Age',
                 controller: _ageController,
+                prefixIcon: Icons.calendar_today_outlined,
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+              const SizedBox(height: 28),
+              SizedBox(
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: const StadiumBorder(),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  child: const Text('Submit'),
                 ),
-                child: const Text('Submit'),
               ),
             ],
           ),

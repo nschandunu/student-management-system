@@ -19,25 +19,47 @@ class _MainNavigationState extends State<MainNavigation> {
     const DeleteScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.blue,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Read'),
-          BottomNavigationBarItem(icon: Icon(Icons.delete), label: 'Delete'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _selectedIndex = index),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          indicatorColor:
+              Theme.of(context).colorScheme.primary.withOpacity(0.12),
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.add_circle_outline),
+              selectedIcon: Icon(Icons.add_circle),
+              label: 'Create',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.people_outline),
+              selectedIcon: Icon(Icons.people),
+              label: 'Students',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.delete_outline),
+              selectedIcon: Icon(Icons.delete),
+              label: 'Delete',
+            ),
+          ],
+        ),
       ),
     );
   }
