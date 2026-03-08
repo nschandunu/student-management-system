@@ -69,8 +69,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
           onPressed: () => controller.clear(),
         ),
       ),
-      validator: (value) =>
-          (value == null || value.trim().isEmpty) ? 'Please enter $label' : null,
+      validator: (value) => (value == null || value.trim().isEmpty)
+          ? 'Please enter $label'
+          : null,
     );
   }
 
